@@ -1,0 +1,37 @@
+version: 2
+
+models:
+  - name: stg_work_orders
+    columns:
+      - name: work_order_id
+        tests:
+          - unique
+          - not_null
+      - name: part_number
+        tests:
+          - not_null
+      - name: status
+        tests:
+          - accepted_values:
+              values: ['open', 'in_progress', 'complete']
+      - name: priority
+        tests:
+          - accepted_values:
+              values: ['critical', 'high', 'medium', 'low']
+      - name: qty_ordered
+        tests:
+          - not_null
+
+  - name: stg_inventory
+    columns:
+      - name: part_number
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_vendors
+    columns:
+      - name: vendor_id
+        tests:
+          - unique
+          - not_null
