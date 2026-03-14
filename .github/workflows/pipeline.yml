@@ -1,0 +1,66 @@
+name: ERP Pipeline
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  push:
+    branches: [master]
+
+jobs:
+  test-and-run:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: erp_user
+          POSTGRES_PASSWORD: erp_pass
+          POSTGRES_DB: erp_dev
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Seed database
+        run: python seed_data.py
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGDATABASE: erp_dev
+          PGUSER: erp_user
+          PGPASSWORD: erp_pass
+
+      - name: Run pytest
+        run: pytest tests/ -v
+
+      - name: Run extraction
+        run: python extract.py
+        env:
+          PGHOST: localhost
+
+      - name: Run dbt
+        run: |
+          cd erp_pipeline
+          dbt run
+          dbt test
+
+      - name: Upload to Azure
+        run: python load.py
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+          AZURE_CONTAINER_NAME: erp-raw
