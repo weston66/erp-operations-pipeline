@@ -61,8 +61,8 @@ jobs:
       - name: Run dbt
         run: |
           cd erp_pipeline
-          dbt run
-          dbt test
+          dbt run --profiles-dir .
+          dbt test --profiles-dir .       
 
       - name: Upload to Azure
         run: python load.py
