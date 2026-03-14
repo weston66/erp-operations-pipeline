@@ -26,6 +26,17 @@ fct_production_summary
 
 ---
 
+## Screenshots
+
+### GitHub Actions - CI/CD Pipeline
+![GitHub Actions](assets/github-actions.png)
+
+### Azure Blob Storage - Raw Zone
+![Azure Blob Storage](assets/azure-blob.png)
+
+### Production Summary Output
+![Production Summary](assets/production-summary.png)
+
 ## Stack
 
 | Layer | Tool |
