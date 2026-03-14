@@ -37,9 +37,9 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Create tables
-          run: psql -h localhost -U erp_user -d erp_dev -f db/init.sql
-          env:
-            PGPASSWORD: erp_pass
+        run: psql -h localhost -U erp_user -d erp_dev -f db/init.sql
+        env:
+          PGPASSWORD: erp_pass
 
       - name: Seed database
         run: python seed_data.py
